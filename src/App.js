@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
+//import react libraries
+import React, {Component} from 'react';
+
+//import components
+import CardList from './cardList';
+
+// import CSS
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    userData: []
+  }
+
+  loadData = async () => {
+    const response = await fetch('https://randomuser.me/api/?results=12')
+    const data = await response.json();
+    return data.results;
+  }
+
+  handleClick = async (e) => {
+    e.preventDefault();
+    const newUserData = await this.loadData();
+
+    this.setState({
+      userData: newUserData
+    })
+  }
+
+  async componentDidMount() {
+    const userData = await this.loadData();
+
+    this.setState({
+      userData: userData
+    })
+  }
+
+  render() {
+    const {userData} = this.state;
+    return (
+      <div className="App">
+        <button onClick={(e) => this.handleClick(e)}>Load New People</button>
+        <CardList userData = {userData}/>
+      </div>
+    )
+  }
 }
 
 export default App;
